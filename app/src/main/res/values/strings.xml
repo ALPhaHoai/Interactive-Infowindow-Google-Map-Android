@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GoogleMapViewwithMarker</string>
+
+    <string name="dayAccumulate">Today accumulated total</string>
+    <string name="stratset">03 hour 01 min.</string>
+    <string name="trunOff">Engine off</string>
+    <string name="idleSpeed">Idle speed</string>
+    <string name="Speed">Speed</string>
+    <string name="totalMileage">Total mileage</string>
+    <string name="normal">Normal</string>
+</resources>
