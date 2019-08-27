@@ -23,7 +23,7 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
     GoogleMap.OnMapLoadedCallback {
 
     companion object {
-        private val TAG = "MainActivity"
+        private val TAG = MainActivity::class.simpleName
         private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
         private val markerIconSize = 60
     }

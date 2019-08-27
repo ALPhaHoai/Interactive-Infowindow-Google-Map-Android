@@ -19,21 +19,24 @@ object BitmapUtils {
         return Bitmap.createScaledBitmap(imageBitmap, width, height, false)
     }
 
-    
+
     /**
      * Demonstrates converting a [Drawable] to a [BitmapDescriptor],
      * for use as a marker icon.
      */
     private fun vectorToBitmap(context: Context, @DrawableRes id: Int, @ColorInt color: Int): BitmapDescriptor? {
-        val vectorDrawable = ResourcesCompat.getDrawable(context.getResources(), id, null) ?: return null
-        val bitmap = Bitmap.createBitmap(
-            vectorDrawable.getIntrinsicWidth(),
-            vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
-        DrawableCompat.setTint(vectorDrawable, color)
-        vectorDrawable.draw(canvas)
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+        val vectorDrawable =
+            ResourcesCompat.getDrawable(context.getResources(), id, null) ?: return null
+        with(vectorDrawable) {
+            val bitmap = Bitmap.createBitmap(
+                intrinsicWidth,
+                intrinsicHeight, Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            setBounds(0, 0, canvas.width, canvas.height)
+            DrawableCompat.setTint(this, color)
+            draw(canvas)
+            return BitmapDescriptorFactory.fromBitmap(bitmap)
+        }
     }
 }
