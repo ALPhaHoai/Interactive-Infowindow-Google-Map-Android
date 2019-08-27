@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -16,7 +17,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_main.*
-import android.widget.LinearLayout
 
 
 class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListener,
@@ -45,14 +45,10 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var mapViewBundle: Bundle? = null
-        if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY)
-        }
-
+        val mapViewBundle: Bundle? = savedInstanceState?.getBundle(MAPVIEW_BUNDLE_KEY)
         mMapView = findViewById(R.id.map) as MapView
-        mMapView!!.onCreate(mapViewBundle)
-        mMapView!!.getMapAsync(this)
+        mMapView?.onCreate(mapViewBundle)
+        mMapView?.getMapAsync(this)
     }
 
     public override fun onSaveInstanceState(outState: Bundle) {
@@ -64,37 +60,37 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle)
         }
 
-        mMapView!!.onSaveInstanceState(mapViewBundle)
+        mMapView?.onSaveInstanceState(mapViewBundle)
     }
 
     override fun onResume() {
         super.onResume()
-        mMapView!!.onResume()
+        mMapView?.onResume()
     }
 
     override fun onStart() {
         super.onStart()
-        mMapView!!.onStart()
+        mMapView?.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        mMapView!!.onStop()
+        mMapView?.onStop()
     }
 
     override fun onPause() {
-        mMapView!!.onPause()
+        mMapView?.onPause()
         super.onPause()
     }
 
     override fun onDestroy() {
-        mMapView!!.onDestroy()
+        mMapView?.onDestroy()
         super.onDestroy()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mMapView!!.onLowMemory()
+        mMapView?.onLowMemory()
     }
 
 
@@ -106,8 +102,13 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
             false
         }
 
-        val markerIcon = BitmapUtils.resizeMapIcons(this, R.drawable.car_icon, markerIconSize, markerIconSize)
-        marker = map?.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromBitmap(markerIcon)))
+        val markerIcon =
+            BitmapUtils.resizeMapIcons(this, R.drawable.car_icon, markerIconSize, markerIconSize)
+        marker = map?.addMarker(
+            MarkerOptions().position(latLng).icon(
+                BitmapDescriptorFactory.fromBitmap(markerIcon)
+            )
+        )
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(marker?.position, 17f))
         map?.setOnCameraMoveListener(this)
         map?.setOnMapLoadedCallback(this)
@@ -159,7 +160,8 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
         markerY = screenPosition?.y?.toFloat() ?: 0f
 
         infoWindow?.x = markerX - (infoWindow?.width?.toFloat()?.div(2f) ?: 0f)
-        infoWindow?.y = markerY - (tireBlock?.height?.toFloat() ?: 0f)  - (carName?.height?.toFloat() ?: 0f) - markerIconSize/2
+        infoWindow?.y = markerY - (tireBlock?.height?.toFloat() ?: 0f) - (carName?.height?.toFloat()
+            ?: 0f) - markerIconSize / 2
     }
 
     internal fun toggleCarInfo() {
