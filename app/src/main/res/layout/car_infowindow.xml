@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@color/cast_intro_overlay_button_background_color"
+        android:background="#1CE68F"
         android:text="Car 123456"></TextView>
 
     <include layout="@layout/car_info" />
