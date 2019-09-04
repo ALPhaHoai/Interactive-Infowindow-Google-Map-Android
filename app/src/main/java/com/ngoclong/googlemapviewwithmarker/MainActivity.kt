@@ -4,6 +4,9 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.ScaleAnimation
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -39,6 +42,8 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
     internal var isShowCarInfo: Boolean = false
     internal var isMarkerCenter = true
     internal var latLng = LatLng(21.028511, 105.804817)
+
+    val DURATION_WINDOW_ANIMATION = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +102,7 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
         map = googleMap
         setupCarInfoWindow()
         map?.setOnMarkerClickListener {
-            toggleCarInfo()
+            toggleCarInfo(true)
             false
         }
 
@@ -126,7 +131,7 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
         }
 
         closeBtn?.setOnTouchListener { v, event ->
-            hideCarInfo()
+            hideCarInfoWithAnimation(animationEnable = true)
             false
         }
 
@@ -149,29 +154,96 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
     }
 
     private fun locateInfoWindow() {
-        val markerLocation = marker?.position
-        val markerX: Float
-        val markerY: Float//position of marker
-
-        val projection = map?.projection
-        val screenPosition = projection?.toScreenLocation(markerLocation)
-        markerX = screenPosition?.x?.toFloat() ?: 0f
-        markerY = screenPosition?.y?.toFloat() ?: 0f
-
-        infoWindow?.x = markerX - (infoWindow?.width?.toFloat()?.div(2f) ?: 0f)
-        infoWindow?.y = markerY - (tireBlock?.height?.toFloat() ?: 0f) - (carName?.height?.toFloat()
-            ?: 0f) - markerIconSize / 2
+        val (x, y) = getMarkerPosition() ?: return
+        infoWindow?.x = x - (infoWindow?.width?.toFloat()?.div(2f) ?: 0f)
+        infoWindow?.y =
+            y - (tireBlock?.height?.toFloat() ?: 0f) - (carName?.height?.toFloat()
+                ?: 0f) - markerIconSize
     }
 
-    internal fun toggleCarInfo() {
+    private fun getMarkerPosition(): Pair<Float, Float>? {
+        val markerLocation = marker?.position ?: return null
+        val projection = map?.projection ?: return null
+        val screenPosition = projection?.toScreenLocation(markerLocation)
+        val markerX = screenPosition?.x?.toFloat() ?: 0f
+        val markerY = screenPosition?.y?.toFloat() ?: 0f
+        return Pair(markerX, markerY)
+    }
+
+    internal fun toggleCarInfo(animationEnable: Boolean = false) {
         if (isShowCarInfo) {
-            hideCarInfo()
+            hideCarInfoWithAnimation(animationEnable)
         } else {
-            showCarInfo()
+            showCarInfoWithAnimation(animationEnable)
+        }
+    }
+
+    internal fun hideCarInfoWithAnimation(animationEnable: Boolean = false) {
+        infoWindow?.let {
+            if (animationEnable) {
+                val (centerContainerX, centerContainerY) = getMarkerPosition() ?: return
+                val hiddingAnimation = ScaleAnimation(
+                    1f, 0f,
+                    1f, 0f,
+                    centerContainerX, centerContainerY
+                )
+
+                hiddingAnimation.setDuration(DURATION_WINDOW_ANIMATION.toLong())
+                hiddingAnimation.setInterpolator(DecelerateInterpolator())
+
+                hiddingAnimation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationRepeat(p0: Animation?) {
+                    }
+
+                    override fun onAnimationStart(animation: Animation) {
+                    }
+
+                    override fun onAnimationEnd(animation: Animation) {
+                        hideCarInfo()
+                    }
+                })
+
+                it.startAnimation(hiddingAnimation)
+            } else {
+                hideCarInfo()
+            }
+        }
+    }
+
+    internal fun showCarInfoWithAnimation(animationEnable: Boolean = false) {
+        infoWindow?.let {
+            if (animationEnable) {
+                val (centerContainerX, centerContainerY) = getMarkerPosition() ?: return
+                val hiddingAnimation = ScaleAnimation(
+                    0f, 1f,
+                    0f, 1f,
+                    centerContainerX, centerContainerY
+                )
+
+                hiddingAnimation.setDuration(DURATION_WINDOW_ANIMATION.toLong())
+                hiddingAnimation.setInterpolator(DecelerateInterpolator())
+
+                hiddingAnimation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationRepeat(p0: Animation?) {
+                    }
+
+                    override fun onAnimationStart(animation: Animation) {
+                    }
+
+                    override fun onAnimationEnd(animation: Animation) {
+                        showCarInfo()
+                    }
+                })
+
+                it.startAnimation(hiddingAnimation)
+            } else {
+                showCarInfo()
+            }
         }
     }
 
     internal fun hideCarInfo() {
+        infoWindow ?: return
         isShowCarInfo = false
         infoWindow?.visibility = View.VISIBLE
         tireBlock?.visibility = View.INVISIBLE
@@ -179,6 +251,7 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
     }
 
     internal fun showCarInfo() {
+        infoWindow ?: return
         infoWindow?.visibility = View.VISIBLE
         isShowCarInfo = true
         tireBlock?.visibility = View.VISIBLE
