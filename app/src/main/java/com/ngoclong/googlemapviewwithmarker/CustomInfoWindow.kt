@@ -10,7 +10,6 @@ import android.view.animation.ScaleAnimation
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 
@@ -18,8 +17,8 @@ class CustomInfoWindow(
     val map: GoogleMap?,
     val marker: Marker?,
     val markerIconSize: Int,
-    val context: Context,
-    val baseLayout: ViewGroup
+    context: Context,
+    baseLayout: ViewGroup
 ) {
     internal var infoWindow: ViewGroup? = null
     internal var tireBlock: ViewGroup? = null
@@ -39,14 +38,14 @@ class CustomInfoWindow(
         set(value) {
             callBtn?.setOnTouchListener(value)
         }
+    internal var onTireBlockClickListener: View.OnTouchListener? = null
+        set(value) {
+            tireBlock?.setOnTouchListener(value)
+        }
 
     val DURATION_WINDOW_ANIMATION = 200
 
     init {
-        setupCarInfoWindow()
-    }
-
-    private fun setupCarInfoWindow() {
         infoWindow =
             LayoutInflater.from(context).inflate(R.layout.car_infowindow, null) as ViewGroup
         tireBlock = infoWindow?.findViewById(R.id.tireLayout)
@@ -54,10 +53,6 @@ class CustomInfoWindow(
         closeBtn = infoWindow?.findViewById(R.id.btn_onecar_exit)
         callBtn = infoWindow?.findViewById(R.id.btn_onecar_call)
         carName = infoWindow?.findViewById(R.id.car_name)
-        tireBlock?.setOnTouchListener { v, event ->
-            Toast.makeText(context, "Tire block clicked", Toast.LENGTH_SHORT).show()
-            false
-        }
 
 
         onCloseBtnClickListener = View.OnTouchListener { v, e -> hideCarInfoWithAnimation(); false }

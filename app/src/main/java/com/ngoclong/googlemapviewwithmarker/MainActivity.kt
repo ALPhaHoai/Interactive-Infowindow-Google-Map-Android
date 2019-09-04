@@ -104,6 +104,10 @@ class MainActivity : Activity(), OnMapReadyCallback, GoogleMap.OnCameraMoveListe
             Toast.makeText(this, "Call btn clicked", Toast.LENGTH_LONG).show()
             false
         }
+        customInfoWindow?.onTireBlockClickListener = View.OnTouchListener { v, e ->
+            Toast.makeText(this, "Tire block clicked", Toast.LENGTH_LONG).show()
+            false
+        }
 
         map?.setOnMarkerClickListener {
             customInfoWindow?.toggleCarInfo()
